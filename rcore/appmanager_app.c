@@ -222,7 +222,8 @@ App *appmanager_get_app(char *app_name)
    // find the app
    App * app;
    // now find the matching
-   list_foreach(app, &_app_manifest_head, App, node){
+   list_foreach(app, &_app_manifest_head, App, node)
+   {
         if (!strncmp(app->name, (char *)app_name, strlen(app->name)))
         {
             // match!

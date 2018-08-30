@@ -64,7 +64,8 @@ static MenuItems* watch_list_item_selected(const MenuItem *item) {
     // loop through all apps
     list_head * app_head = app_manager_get_apps_head();
     App * app;
-    list_foreach(app, app_head, App, node){
+    list_foreach(app, app_head, App, node)
+    {
         if ((!strcmp(app->name, "System")) ||
             //             (!strcmp(node->name, "91 Dub 4.0")) ||
             (!strcmp(app->name, "watchface")))
