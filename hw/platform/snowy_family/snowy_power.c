@@ -30,6 +30,7 @@
 #include "stm32_power.h"
 #include "log.h"
 #include "power.h"
+#include "semphr.h"
 
 /* Setup the power pin ADC and port */
 #define PWR_BAT_PIN          GPIO_Pin_1
@@ -40,6 +41,8 @@
  *  (3:1 div, raw adc value given) */
 #define BAT_MV_MAX     3500
 #define BAT_MV_MIN     2550
+
+static SemaphoreHandle_t _adc_mutex;
 
 static const stm32_i2c_conf_t i2c_conf = {
     .i2c_x                     = I2C1,
@@ -76,6 +79,7 @@ void hw_power_init(void)
 
 static void _adc_init(void)
 {
+    _adc_mutex = xSemaphoreCreateMutexStatic(&_adc_mutex);
     ADC_InitTypeDef ADC_InitStructure;
     ADC_CommonInitTypeDef ADC_CommonInitStructure;
     ADC_CommonStructInit(&ADC_CommonInitStructure);
@@ -113,6 +117,7 @@ static void _adc_init(void)
 
 static uint16_t _read_adc(uint8_t channel)
 {
+    xSemaphoreTake(_adc_mutex, portMAX_DELAY);
     stm32_power_request(STM32_POWER_APB2, RCC_APB2Periph_ADC1);
     stm32_power_request(STM32_POWER_AHB1, RCC_AHB1Periph_GPIOA);
 
@@ -127,6 +132,7 @@ static uint16_t _read_adc(uint8_t channel)
 
     stm32_power_release(STM32_POWER_APB2, RCC_APB2Periph_ADC1);
     stm32_power_release(STM32_POWER_AHB1, RCC_AHB1Periph_GPIOA);
+    xSemaphoreGive(_adc_mutex);
     return val;
 }
 
