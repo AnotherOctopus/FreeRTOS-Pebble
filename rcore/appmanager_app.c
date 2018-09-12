@@ -222,8 +222,12 @@ App *appmanager_get_app(char *app_name)
    // find the app
    App * app;
    // now find the matching
+<<<<<<< HEAD
    list_foreach(app, &_app_manifest_head, App, node)
    {
+=======
+   list_foreach(app, &_app_manifest_head, App, node){
+>>>>>>> 87284f97776386a834216faf34f7d7688cfd83aa
         if (!strncmp(app->name, (char *)app_name, strlen(app->name)))
         {
             // match!
